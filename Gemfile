@@ -1,10 +1,10 @@
 source 'https://rubygems.org'
-ruby '2.4.0'
+ruby '2.4.1'
 
 gem 'dotenv-rails', :require => 'dotenv/rails-now'
 gem 'rb-readline'
 gem 'oj'
-gem 'rails', '5.1.2'
+gem 'rails', '5.0.4'
 gem 'pg'
 gem 'sassc-rails'
 gem 'uglifier'
