@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  mount Payola::Engine => '/payola', as: :payola
   require 'sidekiq/web'
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
     username == ENV["SIDEKIQ_USERNAME"] && password == ENV["SIDEKIQ_PASSWORD"]
@@ -48,6 +47,7 @@ Rails.application.routes.draw do
       get '/:host_type/:login', to: 'repository_users#show'
     end
 
+    get '/:platform/:name/contributors', to: 'projects#contributors', constraints: { :platform => /[\w\-]+/, :name => /[\w\.\-\%]+/ }
     get '/:platform/:name/:version/tree', to: 'tree#show', constraints: { :platform => /[\w\-]+/, :name => /[\w\-\%]+/, :version => /[\w\.\-]+/ }, as: :version_tree
     get '/:platform/:name/:version/dependencies', to: 'projects#dependencies', constraints: { :platform => /[\w\-]+/, :name => /[\w\-\%]+/, :version => /[\w\.\-]+/ }
     get '/:platform/:name/dependent_repositories', to: 'projects#dependent_repositories', constraints: { :platform => /[\w\-]+/, :name => /[\w\.\-\%]+/ }
@@ -84,9 +84,6 @@ Rails.application.routes.draw do
   get '/explore', to: 'explore#index'
   get '/collections', to: 'collections#index', as: :collections
   get '/explore/:language-:keyword-libraries', to: 'collections#show', as: :collection
-
-  get '/pricing', to: 'account_subscriptions#plans', as: :pricing
-  resources :account_subscriptions
 
   get '/recommendations', to: 'recommendations#index', as: :recommendations
 
@@ -133,7 +130,6 @@ Rails.application.routes.draw do
   get 'removed-libraries', to: redirect("/explore/removed-libraries")
   get '/help-wanted', to: redirect("/explore/help-wanted")
   get '/first-pull-request', to: redirect("/explore/first-pull-request")
-  
 
   get '/platforms', to: 'platforms#index', as: :platforms
 

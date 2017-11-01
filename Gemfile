@@ -43,7 +43,6 @@ gem 'gemoji'
 gem 'js_cookie_rails'
 gem 'foreman', require: false
 gem 'puma'
-gem 'payola-payments', git: 'https://github.com/librariesio/payola'
 gem 'rack-timeout'
 gem 'semantic_range'
 gem 'license-compatibility'
@@ -73,7 +72,6 @@ gem 'org-ruby'
 gem 'creole'
 gem 'bundler'
 gem 'bibliothecary'
-gem 'stripe'
 gem 'github-linguist'
 gem 'appsignal', '~> 2.3.0'
 gem 'rack-cors', :require => 'rack/cors'
@@ -102,7 +100,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'database_cleaner'
   gem 'rspec_junit_formatter'
   gem 'shoulda'
