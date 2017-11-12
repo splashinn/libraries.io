@@ -82,6 +82,7 @@ gem 'schema_plus_pg_indexes'
 gem 'autoprefixer-rails', '~> 7.1.2.1'
 gem 'amatch'
 gem 'concurrent-ruby-ext'
+gem 'charlock_holmes', '>= 0.7.5'
 
 group :development do
   gem 'spring'
@@ -105,7 +106,7 @@ group :test do
   gem 'rspec_junit_formatter'
   gem 'shoulda'
   gem 'simplecov', require: false
-  gem 'codeclimate-test-reporter', require: false
+  gem 'codeclimate-test-reporter', '>= 1.0.8', require: false
   gem 'faker'
   gem 'poltergeist'
   gem 'json_spec'

@@ -92,7 +92,7 @@ GEM
       autoprefixer-rails (>= 5.2.1)
       sass (>= 3.3.4)
     brakeman (4.0.1)
-    bugsnag (5.4.1)
+    bugsnag (6.0.0)
     builder (3.2.3)
     capistrano (3.10.0)
       airbrussh (>= 1.0.0)
@@ -226,7 +226,7 @@ GEM
     htmlentities (4.3.4)
     httparty (0.15.6)
       multi_xml (>= 0.5.2)
-    i18n (0.9.0)
+    i18n (0.9.1)
       concurrent-ruby (~> 1.0)
     indefinite_article (0.2.4)
       activesupport
@@ -265,7 +265,7 @@ GEM
     mime-types (3.1)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
-    mini_mime (0.1.4)
+    mini_mime (1.0.0)
     mini_portile2 (2.3.0)
     minitest (5.10.3)
     mize (0.3.4)
@@ -312,7 +312,7 @@ GEM
       omniauth (~> 1.2)
     org-ruby (0.9.12)
       rubypants (~> 0.2)
-    ox (2.8.1)
+    ox (2.8.2)
     parallel (1.12.0)
     pg (0.21.0)
     pg_query (1.0.0)
@@ -334,7 +334,7 @@ GEM
       premailer (~> 1.7, >= 1.7.9)
     protocol (1.0.1)
       ruby_parser (~> 3.0)
-    public_suffix (3.0.0)
+    public_suffix (3.0.1)
     puma (3.10.0)
     rack (2.0.3)
     rack-attack (5.0.1)
@@ -501,7 +501,7 @@ GEM
       sprockets (>= 3.0.0)
     sql_queries_count (0.0.1)
       rails (> 3.0.0)
-    sshkit (1.14.0)
+    sshkit (1.15.0)
       net-scp (>= 1.1.2)
       net-ssh (>= 2.8.0)
     sshkit-interactive (0.2.3)
@@ -511,7 +511,7 @@ GEM
     thor (0.19.4)
     thread_safe (0.3.6)
     tilt (2.0.8)
-    tins (1.15.0)
+    tins (1.15.1)
     toml-rb (1.1.0)
       citrus (~> 3.0, > 3.0)
     turbolinks (5.0.1)
@@ -554,8 +554,9 @@ DEPENDENCIES
   capistrano-maintenance
   capistrano-rails
   capistrano-rails-console
+  charlock_holmes (>= 0.7.5)
   chartkick
-  codeclimate-test-reporter
+  codeclimate-test-reporter (>= 1.0.8)
   commonmarker
   concurrent-ruby-ext
   counter_culture
@@ -646,4 +647,4 @@ RUBY VERSION
    ruby 2.4.2p198
 
 BUNDLED WITH
-   1.15.4
+   1.16.0
