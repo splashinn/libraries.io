@@ -212,6 +212,11 @@ namespace :download do
     PackageManager::PlatformIO.import_async
   end
 
+  desc 'Download all PureScript packages asynchronously'
+  task purescript_all: :environment do
+    PackageManager::PureScript.import_async
+  end
+
   desc 'Download recent Pub packages asynchronously'
   task pub: :environment do
     PackageManager::Pub.import_recent_async
@@ -225,6 +230,11 @@ namespace :download do
   desc 'Download all Pypi packages asynchronously'
   task pypi_all: :environment do
     PackageManager::Pypi.import_async
+  end
+
+  desc 'Download recent Racket packages asynchronously'
+  task racket: :environment do
+    PackageManager::Racket.import_async
   end
 
   desc 'Download recent Rubygems packages asynchronously'
