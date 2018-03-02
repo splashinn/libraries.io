@@ -1,14 +1,14 @@
 module PackageManager
   class Homebrew < Base
-    HAS_VERSIONS = false
-    HAS_DEPENDENCIES = false
+    HAS_VERSIONS = true
+    HAS_DEPENDENCIES = true
     BIBLIOTHECARY_PLANNED = true
     SECURITY_PLANNED = false
     URL = 'http://brew.sh/'
     COLOR = '#555555'
 
     def self.package_link(project, version = nil)
-      "http://brewformulas.org/#{project.name}"
+      "http://formulae.brew.sh/formula/#{project.name}"
     end
 
     def self.install_instructions(project, version = nil)
@@ -33,8 +33,30 @@ module PackageManager
         :name => project['formula'],
         :description => project['description'],
         :homepage => project['homepage'],
-        :repository_url => repo_fallback('', project['homepage'])
+        :repository_url => repo_fallback('', project['homepage']),
+        :version => project['version'],
+        :dependencies => project['dependencies']
       }
+    end
+
+    def self.versions(project)
+      [
+        {
+          number: project['version']
+        }
+      ]
+    end
+
+    def self.dependencies(name, version, project)
+      return nil unless version == project[:version]
+      project[:dependencies].map do |dependency|
+        {
+          project_name: dependency,
+          requirements: '*',
+          kind: 'runtime',
+          platform: self.name.demodulize
+        }
+      end
     end
   end
 end

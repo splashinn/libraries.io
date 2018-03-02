@@ -50,6 +50,7 @@ class ProjectsController < ApplicationController
     end
     find_version
     @contributors = @project.contributors.order('count DESC').visible.limit(24).select(:host_type, :name, :login, :uuid)
+    @owners = @project.registry_users.limit(24)
   end
 
   def sourcerank
@@ -117,7 +118,7 @@ class ProjectsController < ApplicationController
     orginal_scope = Project.includes(:repository).recently_created.maintained
     scope = current_platform.present? ? orginal_scope.platform(current_platform) : orginal_scope
     scope = current_language.present? ? scope.language(current_language) : scope
-    @projects = scope.hacker_news.paginate(page: page_number)
+    @projects = scope.hacker_news.paginate(page: page_number, per_page: 20)
     @platforms = orginal_scope.where('repositories.stargazers_count > 0').group('projects.platform').count.reject{|k,_v| k.blank? }.sort_by{|_k,v| v }.reverse.first(20)
   end
 
