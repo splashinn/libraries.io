@@ -11,12 +11,14 @@ class Api::StatusController < Api::ApplicationController
     else
       @projects = []
     end
-    render json: @projects
-  end
-
-  private
-
-  def find_platform_by_name(name)
-    PackageManager::Base.platforms.find{|p| p.to_s.demodulize.downcase == name.downcase }.try(:to_s).try(:demodulize)
+    render json: @projects.to_json({
+      only: Project::API_FIELDS,
+      methods: [:package_manager_url, :stars, :forks, :keywords, :latest_stable_release],
+      include: {
+        versions: {
+          only: [:number, :published_at]
+        }
+      }
+    })
   end
 end
