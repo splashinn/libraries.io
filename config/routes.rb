@@ -37,6 +37,7 @@ Rails.application.routes.draw do
 
       get '/:host_type/search', to: 'repositories#search'
 
+      get '/:host_type/:login/dependencies', to: 'repository_users#dependencies'
       get '/:host_type/:login/project-contributions', to: 'repository_users#project_contributions'
       get '/:host_type/:login/repository-contributions', to: 'repository_users#repository_contributions'
       get '/:host_type/:login/repositories', to: 'repository_users#repositories'
@@ -53,6 +54,7 @@ Rails.application.routes.draw do
     PROJECT_CONSTRAINT = /[^\/]+/
     VERSION_CONSTRAINT = /[\w\.\-]+/
 
+    get '/:platform/:name/usage', to: 'project_usage#show', as: :project_usage, constraints: { :platform => PLATFORM_CONSTRAINT, :name => PROJECT_CONSTRAINT }
     get '/:platform/:name/sourcerank', to: 'projects#sourcerank', constraints: { :platform => PLATFORM_CONSTRAINT, :name => PROJECT_CONSTRAINT }
     get '/:platform/:name/contributors', to: 'projects#contributors', constraints: { :platform => PLATFORM_CONSTRAINT, :name => PROJECT_CONSTRAINT }
     get '/:platform/:name/:version/tree', to: 'tree#show', constraints: { :platform => /[\w\-]+/, :name => PROJECT_CONSTRAINT, :version => VERSION_CONSTRAINT }, as: :version_tree
@@ -81,9 +83,16 @@ Rails.application.routes.draw do
         get 'unmaintained'
       end
     end
+
+    get '/platforms/:id', to: 'platforms#show', as: :platform
+    get '/platforms', to: 'platforms#index', as: :platforms
+
     get '/stats', to: 'stats#index', as: :stats
+    get '/stats/api', to: 'stats#api', as: :api_stats
     get '/stats/repositories', to: 'stats#repositories', as: :repositories_stats
     get '/graphs', to: 'stats#graphs', as: :graphs
+    get '/:host_type/:login/dependencies', to: 'repository_organisations#dependencies', as: :organisation_dependencies
+    get '/:host_type/:login', to: 'repository_organisations#show', as: :organisation
     get '/', to: 'stats#overview', as: :overview
   end
 
@@ -235,7 +244,8 @@ Rails.application.routes.draw do
   get '/:platform/:name/timeline', to: 'timeline#show', as: :project_timeline, constraints: { :name => /.*/ }, :defaults => { :format => 'html' }
   post '/:platform/:name/mute', to: 'projects#mute', as: :mute_project, constraints: { :name => /.*/ }
   delete '/:platform/:name/unmute', to: 'projects#unmute', as: :unmute_project, constraints: { :name => /.*/ }
-  get '/:platform/:name/tree', to: 'tree#show', constraints: { :name => /[\w\.\-\%]+/ }, as: :tree
+  get '/:platform/:name/tree', to: 'tree#show', constraints: { :name => PROJECT_CONSTRAINT }, as: :tree
+  get '/:platform/:name/score', to: 'projects#score', as: :project_score, constraints: { :name => /.*/ }
   get '/:platform/:name/sourcerank', to: 'projects#sourcerank', as: :project_sourcerank, constraints: { :name => /.*/ }
   get '/:platform/:name/versions', to: 'projects#versions', as: :project_versions, constraints: { :name => /.*/ }
   get '/:platform/:name/tags', to: 'projects#tags', as: :project_tags, constraints: { :name => /.*/ }
@@ -245,7 +255,7 @@ Rails.application.routes.draw do
   get '/:platform/:name/dependent-repositories/yours', to: 'projects#your_dependent_repos', as: :your_project_dependent_repos, constraints: { :name => /.*/ }
   get '/:platform/:name/:number.about', to: 'projects#about', as: :about_version, constraints: { :number => /.*/, :name => /.*/ }
   get '/:platform/:name/:number.ABOUT', to: 'projects#about', constraints: { :number => /.*/, :name => /.*/ }
-  get '/:platform/:name/:number/tree', to: 'tree#show', constraints: { :number => /[\w\.\-\%]+/, :name => /[\w\.\-\%]+/ }, as: :version_tree
+  get '/:platform/:name/:number/tree', to: 'tree#show', constraints: { :number => /[\w\.\-\%]+/, :name => PROJECT_CONSTRAINT }, as: :version_tree
   get '/:platform/:name/:number', to: 'projects#show', as: :version, constraints: { :number => /.*/, :name => /.*/ }
   get '/:platform/:name.about', to: 'projects#about', as: :about_project, constraints: { :name => /.*/ }
   get '/:platform/:name.ABOUT', to: 'projects#about', constraints: { :name => /.*/ }

@@ -303,4 +303,124 @@ namespace :research do
     end;nil
     puts output
   end
+
+  desc 'list dependencies org grouped by org'
+  task org_grouped_cumulative_dependency_list: :environment do
+
+    org_name = 'librariesio'
+    host = 'github'
+    platform = 'rubygems'
+    org = RepositoryOrganisation.host(host).find_by_login(org_name)
+
+    own_dependencies = org.dependencies.platform(platform).includes(project: :repository).select{|d| d.project.try(:repository).try(:full_name) && d.project.repository.full_name.split('/').first == org_name }.length
+
+    total = org.dependencies.platform(platform).count - own_dependencies
+
+    counts = org.favourite_projects.platform(platform).count
+
+    groups = org.favourite_projects.platform(platform).includes(:repository).group_by{|pr| pr.try(:repository).try(:full_name).try(:split,'/').try(:first) }
+
+    usage = []
+
+    groups.each do |owner_name, projects|
+      next if owner_name == org_name
+
+      if owner_name.present? && projects.length > 1 # multirepo
+        name = owner_name + '*'
+        count = projects.map(&:id).sum{|id| counts[id] }
+
+        usage << [name, count]
+      else
+        projects.each do |project|
+          name = project.name
+          count = counts[project.id]
+
+          usage << [name, count]
+        end
+      end
+    end;nil
+
+    rows = []
+    running_total = 0
+
+    usage.sort_by(&:second).reverse.each do |dep|
+      running_total += dep[1]
+      percentage = (running_total/total.to_f*100).round
+      rows << [dep[0], dep[1], running_total, percentage]
+    end
+
+    output = CSV.generate do |csv|
+      csv << ['Project Name', 'Used by Repos', 'Running Total', 'Running Percentage']
+
+      rows.each{|row| csv << row }
+    end;nil
+    puts output
+
+  end
+
+  desc 'grouped dependencies and owners in an ecosystem'
+  task grouped_ecosystem_owners: :environment do
+
+
+    top_projects = Project.order('(dependent_repos_count) DESC').limit(10000).includes(:repository);nil
+
+    total = top_projects.sum(&:dependent_repos_count)
+
+    groups = top_projects.group_by{|pr| pr.try(:repository).try(:full_name).try(:split,'/').try(:first) };nil
+
+    usage = []
+
+    groups.each do |owner_name, projects|
+      if owner_name.present? && projects.length > 1 # multirepo
+        name = owner_name + '*'
+        count = projects.sum(&:dependent_repos_count)
+
+        usage << [name, count]
+      else
+        projects.each do |project|
+          name = project.name
+          count = project.dependent_repos_count
+
+          usage << [name, count]
+        end
+      end
+    end;nil
+
+    rows = []
+    running_total = 0
+
+    usage.sort_by(&:second).reverse.each do |dep|
+      running_total += dep[1]
+      percentage = (running_total/total.to_f*100).round
+      rows << [dep[0], dep[1], running_total, percentage]
+    end
+
+    output = CSV.generate do |csv|
+      csv << ['Project Name', 'Used by Repos', 'Running Total', 'Running Percentage']
+
+      rows.first(1000).each{|row| csv << row }
+    end;nil
+    puts output
+  end
+
+  desc 'find projects who backport'
+  task backported_projects: :environment do
+    platform = 'NuGet'
+
+    projects = Project.platform(platform).order('(dependent_repos_count) DESC NULLS LAST').limit(10000).includes(:versions);nil
+
+    backporting = projects.select do |project|
+      releases = project.stable_releases.select{|v| v.greater_than_1? }.uniq(&:published_at)
+      releases.sort_by(&:published_at).reverse != releases.sort
+    end
+
+    puts "#{backporting.length}/#{projects.length} (#{backporting.length/projects.length.to_f*100}%)"
+  end
+
+  desc 'version breakdowns'
+  task version_breakdowns: :environment do
+    platform = 'rubygems'
+
+    latest_versions = Project.platform(platform).order('(dependent_repos_count) DESC NULLS LAST').limit(10000).pluck(:latest_release_number).compact.map{|v| v.split('.').first.to_i }.sort.inject(Hash.new(0)) { |h, e| h[e] += 1 ; h }
+  end
 end

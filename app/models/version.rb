@@ -7,6 +7,7 @@ class Version < ApplicationRecord
   belongs_to :project
   counter_culture :project
   has_many :dependencies, dependent: :delete_all
+  has_many :runtime_dependencies, -> { where kind: 'runtime' }, class_name: 'Dependency'
 
   after_commit :send_notifications_async, on: :create
   after_commit :update_repository_async, on: :create
@@ -132,5 +133,9 @@ class Version < ApplicationRecord
   def diff_url
     return nil unless project && project.repository && related_tag && previous_version && previous_version.related_tag
     project.repository.compare_url(previous_version.related_tag.number, related_tag.number)
+  end
+
+  def set_runtime_dependencies_count
+    update_column(:runtime_dependencies_count, runtime_dependencies.count)
   end
 end

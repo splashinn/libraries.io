@@ -1,10 +1,10 @@
 source 'https://rubygems.org'
-ruby '2.5.0'
+ruby '2.5.1'
 
 gem 'dotenv-rails', :require => 'dotenv/rails-now'
 gem 'rb-readline'
 gem 'oj'
-gem 'rails', '5.1.5'
+gem 'rails', '5.1.6'
 gem 'pg'
 gem 'sassc-rails'
 gem 'uglifier'
@@ -83,6 +83,7 @@ gem 'concurrent-ruby-ext'
 gem 'charlock_holmes', '>= 0.7.5'
 gem 'octicons_helper'
 gem 'ffi'
+gem 'bootsnap', require: false
 
 group :development do
   gem 'spring'

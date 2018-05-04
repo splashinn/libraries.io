@@ -4,11 +4,11 @@ module PackageManager
     HAS_DEPENDENCIES = true
     BIBLIOTHECARY_SUPPORT = true
     SECURITY_PLANNED = true
-    URL = 'https://pypi.python.org'
+    URL = 'https://pypi.org/'
     COLOR = '#3572A5'
 
     def self.package_link(project, version = nil)
-      "https://pypi.python.org/pypi/#{project.name}/#{version}"
+      "https://pypi.org/project/#{project.name}/#{version}"
     end
 
     def self.install_instructions(project, version = nil)
@@ -20,19 +20,19 @@ module PackageManager
     end
 
     def self.project_names
-      get_raw("https://pypi.python.org/simple/").scan(/href='(\w+)'/).flatten
+      get_raw("https://pypi.org/simple/").scan(/href='(\w+)'/).flatten
     end
 
     def self.recent_names
-      u = 'https://pypi.python.org/pypi?%3Aaction=rss'
+      u = 'https://pypi.org/rss/updates.xml'
       updated = SimpleRSS.parse(get_raw(u)).items.map(&:title)
-      u = 'https://pypi.python.org/pypi?%3Aaction=packages_rss'
+      u = 'https://pypi.org/rss/packages.xml'
       new_packages = SimpleRSS.parse(get_raw(u)).items.map(&:title)
       (updated.map { |t| t.split(' ').first } + new_packages.map { |t| t.split(' ').first }).uniq
     end
 
     def self.project(name)
-      get("https://pypi.python.org/pypi/#{name}/json")
+      get("https://pypi.org/pypi/#{name}/json")
     rescue
       {}
     end
@@ -43,7 +43,7 @@ module PackageManager
         :description => project['info']['summary'],
         :homepage => project['info']['home_page'],
         :keywords_array => Array.wrap(project['info']['keywords'].try(:split, ',')),
-        :licenses => project['info']['license'],
+        :licenses => self.licenses(project),
         :repository_url => repo_fallback('', project['info']['home_page'])
       }
     end
@@ -70,6 +70,12 @@ module PackageManager
           platform: self.name.demodulize
         }
       end
+    end
+
+    def self.licenses(project)
+      return project['info']['license'] if project['info']['license'].present?
+      license_classifiers = project['info']['classifiers'].select { |c| c.start_with?('License :: ')}
+      return license_classifiers.map { |l| l.split(':: ').last }.join(',')
     end
   end
 end

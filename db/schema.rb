@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180302153425) do
+ActiveRecord::Schema.define(version: 20180404110322) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -137,6 +137,9 @@ ActiveRecord::Schema.define(version: 20180302153425) do
     t.string   "status"
     t.datetime "last_synced_at"
     t.integer  "dependent_repos_count"
+    t.integer  "runtime_dependencies_count"
+    t.integer  "score",                       :default=>0, :null=>false
+    t.datetime "score_last_calculated"
 
     t.index ["platform", "name"], :name=>"index_projects_on_platform_and_name_lower", :case_sensitive=>false
   end
@@ -312,11 +315,12 @@ ActiveRecord::Schema.define(version: 20180302153425) do
   end
 
   create_table "versions", id: :serial, default: %q{nextval('versions_id_seq'::regclass)}, force: :cascade do |t|
-    t.integer  "project_id",   :index=>{:name=>"index_versions_on_project_id_and_number", :with=>["number"], :unique=>true, :order=>{:project_id=>:asc, :number=>:asc}}
+    t.integer  "project_id",                 :index=>{:name=>"index_versions_on_project_id_and_number", :with=>["number"], :unique=>true, :order=>{:project_id=>:asc, :number=>:asc}}
     t.string   "number"
     t.datetime "published_at"
-    t.datetime "created_at",   :null=>false
-    t.datetime "updated_at",   :null=>false
+    t.datetime "created_at",                 :null=>false
+    t.datetime "updated_at",                 :null=>false
+    t.integer  "runtime_dependencies_count"
   end
 
   create_table "web_hooks", id: :serial, default: %q{nextval('web_hooks_id_seq'::regclass)}, force: :cascade do |t|
