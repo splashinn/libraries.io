@@ -1,6 +1,17 @@
 module RepositoryHost
   class Github < Base
-    IGNORABLE_EXCEPTIONS = [Octokit::Unauthorized, Octokit::InvalidRepository, Octokit::RepositoryUnavailable, Octokit::NotFound, Octokit::Conflict, Octokit::Forbidden, Octokit::InternalServerError, Octokit::BadGateway, Octokit::ClientError]
+    IGNORABLE_EXCEPTIONS = [
+      Octokit::Unauthorized,
+      Octokit::InvalidRepository,
+      Octokit::RepositoryUnavailable,
+      Octokit::NotFound,
+      Octokit::Conflict,
+      Octokit::Forbidden,
+      Octokit::InternalServerError,
+      Octokit::BadGateway,
+      Octokit::ClientError,
+      Octokit::UnavailableForLegalReasons
+    ]
 
     def self.api_missing_error_class
       Octokit::NotFound
