@@ -8,6 +8,9 @@
       <%= image_tag @user.avatar_url(100), width: 50, height: 50, alt: @user %>
       <%= @user %>
       <%= link_to fa_icon(@user.host_type.downcase), @user.repository_url, class: 'tip', title: "View #{@user.login} on #{@user.host_type}" %>
+      <% if logged_in? && current_user.admin? %>
+        <%= link_to 'Edit in Admin', admin_edit_owner_path(@user.host_type.downcase, @user.login), class: 'btn btn-danger ', rel: 'nofollow' %>
+      <% end %>
     </h1>
     <% unless @user.org? %>
       <% count = @user.open_source_contributions.count %>
@@ -98,3 +101,26 @@
   </div>
 </div>
 <% end %>
+<div class="row">
+  <div class="col-md-12">
+    <p>
+      <small class='text-muted'>Last synced: <%= @user.last_synced_at || @user.created_at %></small>
+    </p>
+    <% unless @user.recently_synced? %>
+      <% if logged_in? %>
+        <p>
+          <%= link_to sync_user_path(@user.to_param), class: 'btn btn-primary btn-xs', method: :post do %>
+            <%= fa_icon 'refresh' %>
+            Resync
+          <% end %>
+        </p>
+      <% else %>
+        <p>
+          <small class='text-muted'>
+            <%= link_to 'Login', login_path(return_to: request.original_url) %> to resync this page
+          </small>
+        </p>
+      <% end %>
+    <% end %>
+  </div>
+</div>

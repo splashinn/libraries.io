@@ -92,6 +92,9 @@ Rails.application.routes.draw do
     get '/stats/repositories', to: 'stats#repositories', as: :repositories_stats
     get '/graphs', to: 'stats#graphs', as: :graphs
     get '/:host_type/:login/dependencies', to: 'repository_organisations#dependencies', as: :organisation_dependencies
+    delete '/:host_type/:login', to: 'repository_organisations#destroy'
+    patch '/:host_type/:login', to: 'repository_organisations#update'
+    get '/:host_type/:login/edit', to: 'repository_organisations#edit', as: :edit_owner
     get '/:host_type/:login', to: 'repository_organisations#show', as: :organisation
     get '/', to: 'stats#overview', as: :overview
   end
@@ -169,6 +172,7 @@ Rails.application.routes.draw do
     get '/:host_type/:login/contributions', to: 'repository_users#contributions', as: :user_contributions
     get '/:host_type/:login/projects', to: 'repository_users#projects', as: :user_projects
     get '/:host_type/:login/contributors', to: 'repository_users#contributors', as: :user_contributors
+    post '/:host_type/:login/sync', to: 'repository_users#sync', as: :sync_user
     get '/:host_type/:login', to: 'repository_users#show', as: :user
 
     get '/:host_type/:owner/:name', to: 'repositories#show', as: :repository, :defaults => { :format => 'html' }, constraints: { :name => /[\w\.\-\%]+/ }
